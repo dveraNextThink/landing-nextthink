@@ -202,6 +202,29 @@
   }
   .marquee-track .client:hover { color: var(--ink); }
   .marquee-track .client em { font-family: var(--serif); font-weight: 400; }
+  /* Client logos — real clients from the dossier. Monochrome ink on paper;
+     lift to full color on hover. multiply integrates the JPG (Academia) so
+     its white background disappears into the paper canvas. */
+  .marquee-track .client-logo {
+    display: inline-flex;
+    align-items: center;
+    height: 48px;
+    flex: 0 0 auto;
+  }
+  .marquee-track .client-logo img {
+    display: block;
+    width: auto;
+    filter: grayscale(1) contrast(1.04);
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    transition: filter 0.35s ease, opacity 0.35s ease;
+  }
+  .marquee-track .client-logo:hover img { filter: grayscale(0); opacity: 1; }
+  .marquee-track .cl-gerimport img { height: 24px; }
+  .marquee-track .cl-licitar  img { height: 30px; }
+  .marquee-track .cl-tamevi   img { height: 44px; }
+  .marquee-track .cl-percomur img { height: 18px; }
+  .marquee-track .cl-academia img { height: 44px; }
 
   /* ─── Section shared ───────────────────────────── */
   section.block { padding: 140px 0; position: relative; overflow: hidden; }
@@ -428,17 +451,25 @@
     margin-left: auto; margin-right: auto;
     line-height: 1.5;
   }
-  .cta-btn {
+  .cta-actions {
     margin-top: 48px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .cta-btn {
     display: inline-flex;
     align-items: center; gap: 10px;
     background: var(--ink);
     color: var(--white);
     padding: 20px 32px;
+    border: 1px solid transparent;
     border-radius: 100px;
     font-size: 17px;
     font-weight: 500;
-    transition: transform 0.25s;
+    transition: transform 0.25s, background 0.25s, color 0.25s;
     position: relative; overflow: hidden;
   }
   .cta-btn:hover { transform: translateY(-2px); }
@@ -451,6 +482,26 @@
     transition: left 0.6s ease;
   }
   .cta-btn:hover::before { left: 100%; }
+  /* WhatsApp — secondary outline pill; stays monochrome ink to honour the
+     brand palette (no WhatsApp green), glyph inherits currentColor. */
+  .cta-btn--wa {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .cta-btn--wa::before { display: none; }
+  .cta-btn--wa svg { width: 20px; height: 20px; flex: 0 0 auto; }
+  .cta-btn--wa .wa-num { opacity: 0.55; font-variant-numeric: tabular-nums; }
+  .cta-btn--wa:hover { background: var(--ink); color: var(--white); }
+  /* `.magnetic > *` later in the sheet flattens these to inline-block, which
+     lets the WhatsApp SVG ride the baseline and inflate its height — the two
+     pills end up different sizes. Re-assert flex and pin one shared height. */
+  .cta-actions .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 30px;
+  }
 
   /* ─── Footer ────────────────────────────────────── */
   footer {
@@ -712,6 +763,12 @@
     .marquee-track .client { font-size: 20px; }
     .marquee-track { gap: 48px; }
     .marquee-label { font-size: 10px; }
+    .marquee-track .client-logo { height: 40px; }
+    .marquee-track .cl-gerimport img { height: 20px; }
+    .marquee-track .cl-licitar  img { height: 25px; }
+    .marquee-track .cl-tamevi   img { height: 36px; }
+    .marquee-track .cl-percomur img { height: 15px; }
+    .marquee-track .cl-academia img { height: 36px; }
 
     section.block { padding: 80px 0; }
     .process-block { padding: 80px 0; }
@@ -859,23 +916,37 @@
   <div class="marquee">
     <div class="marquee-label">Equipos que confían</div>
     <div class="marquee-track" id="marquee">
-      <span class="client">Atlas<em>Logistics</em></span>
-      <span class="client">Northwind Banca</span>
-      <span class="client">Helix <em>Health</em></span>
-      <span class="client">Gerimport</span>
-      <span class="client">Solvia Energy</span>
-      <span class="client">Foro <em>Público</em></span>
-      <span class="client">Orbital Retail</span>
-      <span class="client">Kite Robotics</span>
-      <!-- duplicate for seamless loop -->
-      <span class="client">Atlas<em>Logistics</em></span>
-      <span class="client">Northwind Banca</span>
-      <span class="client">Helix <em>Health</em></span>
-      <span class="client">Gerimport</span>
-      <span class="client">Solvia Energy</span>
-      <span class="client">Foro <em>Público</em></span>
-      <span class="client">Orbital Retail</span>
-      <span class="client">Kite Robotics</span>
+      <span class="client client-logo cl-gerimport" data-od-id="cliente-gerimport">
+        <img src="assets/logo-gerimport.svg" alt="Gerimport SL" width="103" height="22"/>
+      </span>
+      <span class="client client-logo cl-licitar" data-od-id="cliente-licitar">
+        <img src="assets/logo-licitar-ganar.png" alt="Licitar y Ganar IA" width="6501" height="1467"/>
+      </span>
+      <span class="client client-logo cl-tamevi" data-od-id="cliente-tamevi">
+        <img src="assets/logo-tamevi.png" alt="Tamevi SL" width="666" height="375"/>
+      </span>
+      <span class="client client-logo cl-percomur" data-od-id="cliente-percomur">
+        <img src="assets/logo-percomur.png" alt="Percomur SL" width="2560" height="250"/>
+      </span>
+      <span class="client client-logo cl-academia" data-od-id="cliente-academia">
+        <img src="assets/logo-academia314.jpg" alt="Academia 3,14" width="1200" height="620"/>
+      </span>
+      <!-- duplicado para bucle continuo (decorativo) -->
+      <span class="client client-logo cl-gerimport" aria-hidden="true">
+        <img src="assets/logo-gerimport.svg" alt="" width="103" height="22"/>
+      </span>
+      <span class="client client-logo cl-licitar" aria-hidden="true">
+        <img src="assets/logo-licitar-ganar.png" alt="" width="6501" height="1467"/>
+      </span>
+      <span class="client client-logo cl-tamevi" aria-hidden="true">
+        <img src="assets/logo-tamevi.png" alt="" width="666" height="375"/>
+      </span>
+      <span class="client client-logo cl-percomur" aria-hidden="true">
+        <img src="assets/logo-percomur.png" alt="" width="2560" height="250"/>
+      </span>
+      <span class="client client-logo cl-academia" aria-hidden="true">
+        <img src="assets/logo-academia314.jpg" alt="" width="1200" height="620"/>
+      </span>
     </div>
   </div>
 
@@ -994,17 +1065,17 @@
   </section>
 
   <!-- ═══════════ QUOTE ═══════════ -->
-  <section class="quote-block">
+  <section class="quote-block" data-od-id="testimonio-tamevi">
     <div class="wrap">
-      <div class="section-eyebrow reveal-up"><span class="num">04</span> Cliente · Atlas Logistics</div>
+      <div class="section-eyebrow reveal-up"><span class="num">04</span> Cliente · Tamevi SL</div>
       <p class="quote-text" id="quoteText">
-        NextThink no nos vendió un modelo, nos dejó un <em>sistema</em> que resuelve el problema real y que nuestro equipo entiende, mantiene y mejora cada sprint.
+        Les llevamos un problema muy concreto —presupuestar carpintería de aluminio con su hoja de corte— y NextThink no nos vendió una promesa: montaron un <em>sistema</em> que lo resuelve desde nuestra propia plantilla.
       </p>
       <div class="quote-meta reveal-up">
         <span class="dot"></span>
-        <span>Marta Soler</span>
+        <span>José María Rodríguez</span>
         <span class="dot"></span>
-        <span>VP de Ingeniería · Atlas Logistics</span>
+        <span>CEO de Tamevi SL</span>
       </div>
     </div>
   </section>
@@ -1023,9 +1094,15 @@
       <p class="cta-sub reveal-up">
         Primera llamada de 30 minutos, sin compromiso. Escuchamos el problema y te decimos si podemos construir la solución — y si no podemos, también.
       </p>
-      <span class="magnetic" style="display: inline-block;"><a href="mailto:hello@nextthink.ai" class="cta-btn reveal-up">
-        hello@nextthink.ai <span class="arrow">→</span>
-      </a></span>
+      <div class="cta-actions reveal-up">
+        <span class="magnetic" style="display: inline-block;"><a href="mailto:info@nextthink.es" class="cta-btn" data-od-id="cta-email">
+          info@nextthink.es <span class="arrow">→</span>
+        </a></span>
+        <span class="magnetic" style="display: inline-block;"><a href="https://wa.me/34684011183" target="_blank" rel="noopener" class="cta-btn cta-btn--wa" data-od-id="cta-whatsapp" aria-label="Escríbenos por WhatsApp al 684 011 183">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.887 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 005.71 1.447h.005c6.585 0 11.946-5.335 11.949-11.893a11.821 11.821 0 00-3.48-8.463"/></svg>
+          WhatsApp <span class="wa-num">684&nbsp;011&nbsp;183</span>
+        </a></span>
+      </div>
     </div>
   </section>
 
@@ -1056,7 +1133,8 @@
         <div>
           <h4>Contacto</h4>
           <ul>
-            <li><a href="mailto:hello@nextthink.ai">hello@nextthink.ai</a></li>
+            <li><a href="mailto:info@nextthink.es">info@nextthink.es</a></li>
+            <li><a href="https://wa.me/34684011183" target="_blank" rel="noopener">WhatsApp · 684 011 183</a></li>
             <li><a href="#">LinkedIn</a></li>
             <li><a href="#">GitHub</a></li>
           </ul>
