@@ -21,6 +21,13 @@
     --sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     --serif: "Instrument Serif", Georgia, serif;
     --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+    --duration-press: 160ms;
+    --duration-small: 200ms;
+    --duration-ui: 250ms;
+    --duration-drawer: 300ms;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; overflow-x: clip; max-width: 100%; }
@@ -57,31 +64,33 @@
   .nav-links { display: flex; gap: 32px; font-size: 14px; color: var(--ink-60); font-weight: 500; }
   .nav-links a { transition: color 0.2s; position: relative; }
   .nav-links a::after {
-    content: ''; position: absolute;
-    left: 0; bottom: -4px; height: 1px; width: 0;
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 1px;
     background: currentColor;
-    transition: width 0.3s ease;
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--duration-ui) var(--ease-out);
   }
-  .nav-links a:hover { color: var(--ink); }
-  .nav-links a:hover::after { width: 100%; }
   .nav-cta {
     font-size: 13px; font-weight: 500;
     padding: 9px 18px;
     background: var(--ink); color: var(--white);
     border-radius: 100px;
-    transition: transform 0.2s, background 0.2s;
     position: relative; overflow: hidden;
   }
-  .nav-cta:hover { transform: translateY(-1px); background: var(--ink-80); }
   .nav-cta::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
+    top: 0; left: 0;
     width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transition: left 0.6s ease;
+    transform: translateX(-100%);
+    transition: transform var(--duration-ui) var(--ease-out);
   }
-  .nav-cta:hover::before { left: 100%; }
 
   /* ─── Hero ────────────────────────────────────────── */
   .hero {
@@ -98,11 +107,11 @@
     text-transform: uppercase;
     color: var(--ink-60);
     margin-bottom: 40px;
-    opacity: 0;
+    opacity: 1;
     display: flex; align-items: center; gap: 14px;
   }
   .hero-eyebrow::before {
-    content: ''; display: inline-block; width: 0; height: 1px; background: var(--ink-60);
+    content: ''; display: inline-block; width: 40px; height: 1px; background: var(--ink-60);
   }
 
   .hero-h1 {
@@ -113,12 +122,31 @@
     margin-bottom: 40px;
   }
   .hero-h1 .line { display: block; overflow: hidden; }
-  .hero-h1 .line span { display: inline-block; transform: translateY(110%); }
+
+  .hero-h1 .line span {
+    display: inline-block;
+    transform: translateY(0);
+    transition: transform 800ms var(--ease-out);
+  }
+
+  .hero-h1 .line:nth-child(2) span { transition-delay: 60ms; }
+  .hero-h1 .line:nth-child(3) span { transition-delay: 120ms; }
+
+  @starting-style {
+    .hero-h1 .line span { transform: translateY(110%); }
+  }
+
   .hero-h1 em {
     font-family: var(--serif);
     font-style: italic;
     font-weight: 400;
     color: var(--ink);
+  }
+
+  .scramble {
+    display: inline-block;
+    min-width: 5ch;
+    white-space: nowrap;
   }
 
   .hero-sub {
@@ -127,33 +155,29 @@
     color: var(--ink-60);
     max-width: 520px;
     margin-bottom: 48px;
-    opacity: 0;
+    opacity: 1;
   }
 
-  .hero-ctas { display: flex; gap: 14px; opacity: 0; }
+  .hero-ctas { display: flex; gap: 14px; opacity: 1; }
   .btn {
     font-size: 15px; font-weight: 500;
     padding: 14px 24px;
     border-radius: 100px;
-    transition: transform 0.2s, background 0.2s, color 0.2s;
     display: inline-flex; align-items: center; gap: 8px;
     position: relative; overflow: hidden;
   }
   .btn.primary { background: var(--ink); color: var(--white); }
-  .btn.primary:hover { transform: translateY(-1px); background: var(--ink-80); }
   .btn.primary::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
+    top: 0; left: 0;
     width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transition: left 0.6s ease;
+    transform: translateX(-100%);
+    transition: transform var(--duration-ui) var(--ease-out);
   }
-  .btn.primary:hover::before { left: 100%; }
   .btn.ghost { color: var(--ink); }
-  .btn.ghost:hover { color: var(--accent); }
-  .btn .arrow { transition: transform 0.25s; display: inline-block; }
-  .btn:hover .arrow { transform: translateX(4px); }
+  .btn .arrow { transition: transform var(--duration-ui) var(--ease-out); display: inline-block; }
 
   /* Floating symbol in hero */
   .hero-symbol {
@@ -200,10 +224,9 @@
     white-space: nowrap;
     transition: color 0.3s;
   }
-  .marquee-track .client:hover { color: var(--ink); }
   .marquee-track .client em { font-family: var(--serif); font-weight: 400; }
   /* Client logos — real clients from the dossier. Monochrome ink on paper;
-     lift to full color on hover. multiply integrates the JPG (Academia) so
+     lift to full opacity on hover. multiply integrates the JPG (Academia) so
      its white background disappears into the paper canvas. */
   .marquee-track .client-logo {
     display: inline-flex;
@@ -217,9 +240,8 @@
     filter: grayscale(1) contrast(1.04);
     opacity: 0.5;
     mix-blend-mode: multiply;
-    transition: filter 0.35s ease, opacity 0.35s ease;
+    transition: opacity var(--duration-small) ease;
   }
-  .marquee-track .client-logo:hover img { filter: grayscale(0); opacity: 1; }
   .marquee-track .cl-gerimport img { height: 24px; }
   .marquee-track .cl-licitar  img { height: 30px; }
   .marquee-track .cl-tamevi   img { height: 44px; }
@@ -284,9 +306,6 @@
     position: relative;
     transition: background 0.3s;
   }
-  .service:hover { background: var(--white); }
-  .service.tilt-ready { transform-style: preserve-3d; will-change: transform; }
-  .service.tilt-ready > * { transform: translateZ(30px); }
   .service .num {
     font-family: var(--mono);
     font-size: 11px;
@@ -347,10 +366,8 @@
     align-items: baseline;
     gap: 32px;
     position: relative;
-    transition: padding 0.4s;
     min-width: 0;
   }
-  .step:hover { padding-left: 12px; }
   .step .num {
     font-family: var(--mono);
     font-size: 12px;
@@ -442,7 +459,6 @@
     letter-spacing: -0.045em;
   }
   .cta-h em { font-family: var(--serif); font-style: italic; font-weight: 400; }
-  .cta-h .char { display: inline-block; will-change: transform; }
   .cta-sub {
     margin-top: 36px;
     font-size: 18px;
@@ -469,19 +485,17 @@
     border-radius: 100px;
     font-size: 17px;
     font-weight: 500;
-    transition: transform 0.25s, background 0.25s, color 0.25s;
     position: relative; overflow: hidden;
   }
-  .cta-btn:hover { transform: translateY(-2px); }
   .cta-btn::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
+    top: 0; left: 0;
     width: 100%; height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transition: left 0.6s ease;
+    transform: translateX(-100%);
+    transition: transform var(--duration-ui) var(--ease-out);
   }
-  .cta-btn:hover::before { left: 100%; }
   /* WhatsApp — secondary outline pill; stays monochrome ink to honour the
      brand palette (no WhatsApp green), glyph inherits currentColor. */
   .cta-btn--wa {
@@ -492,10 +506,6 @@
   .cta-btn--wa::before { display: none; }
   .cta-btn--wa svg { width: 20px; height: 20px; flex: 0 0 auto; }
   .cta-btn--wa .wa-num { opacity: 0.55; font-variant-numeric: tabular-nums; }
-  .cta-btn--wa:hover { background: var(--ink); color: var(--white); }
-  /* `.magnetic > *` later in the sheet flattens these to inline-block, which
-     lets the WhatsApp SVG ride the baseline and inflate its height — the two
-     pills end up different sizes. Re-assert flex and pin one shared height. */
   .cta-actions .cta-btn {
     display: inline-flex;
     align-items: center;
@@ -529,7 +539,6 @@
   .foot-grid ul a {
     font-size: 14px; color: var(--ink); transition: color 0.2s;
   }
-  .foot-grid ul a:hover { color: var(--accent); }
   .foot-brand img { height: 36px; width: auto; margin-bottom: 20px; }
   .foot-brand p {
     font-size: 14px; color: var(--ink-60);
@@ -546,22 +555,6 @@
   .reveal-up { opacity: 0; transform: translateY(24px); }
   .reveal-stagger > * { opacity: 0; transform: translateY(20px); }
 
-  /* Cursor dot */
-  .cursor {
-    position: fixed;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--ink);
-    pointer-events: none;
-    z-index: 9999;
-    mix-blend-mode: difference;
-    transform: translate(-50%, -50%);
-    transition: width 0.2s, height 0.2s, background 0.2s;
-    top: 0; left: 0;
-    opacity: 0;
-  }
-  .cursor.hover { width: 28px; height: 28px; background: var(--paper); }
-
   /* Floating ambient shapes */
   .ambient {
     position: absolute;
@@ -575,10 +568,6 @@
     opacity: 0.35;
     will-change: transform;
   }
-
-  /* Magnetic button wrapper */
-  .magnetic { display: inline-block; will-change: transform; }
-  .magnetic > * { display: inline-block; will-change: transform; }
 
   /* Big ghost section number */
   .ghost-num {
@@ -621,14 +610,6 @@
     font-size: 34px; color: white;
   }
 
-  /* Scramble hero word */
-  .scramble {
-    font-family: var(--serif);
-    font-style: italic;
-    display: inline-block;
-    min-width: 5ch;
-    white-space: nowrap;
-  }
   .hero-h1 .line span { white-space: nowrap; }
 
   /* Scroll progress bar */
@@ -636,7 +617,8 @@
     position: fixed; top: 0; left: 0;
     height: 2px; background: var(--accent);
     z-index: 101;
-    width: 0;
+    width: 100%;
+    transform: scaleX(0);
     transform-origin: left center;
   }
 
@@ -644,9 +626,6 @@
   .hero-mobile-logo {
     display: none;
   }
-
-  /* Hide cursor dot on touch */
-  @media (hover: none) { .cursor { display: none; } }
 
   /* ─── Hamburger menu ────────────────────────────── */
   .nav-hamburger {
@@ -665,11 +644,13 @@
     height: 2px;
     background: var(--ink);
     border-radius: 2px;
-    transition: transform 0.3s, opacity 0.3s;
+    transition:
+      transform var(--duration-ui) var(--ease-in-out),
+      opacity var(--duration-small) var(--ease-out);
     transform-origin: center;
   }
   .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0.95); }
   .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
   /* Mobile nav drawer */
@@ -678,7 +659,7 @@
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: var(--paper);
-    z-index: 110;
+    z-index: 90;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -686,7 +667,9 @@
     opacity: 0;
     pointer-events: none;
     transform: translateY(-8px);
-    transition: opacity 0.3s, transform 0.3s;
+    transition:
+      opacity var(--duration-drawer) var(--ease-drawer),
+      transform var(--duration-drawer) var(--ease-drawer);
   }
   .mobile-nav.open {
     opacity: 1;
@@ -698,9 +681,8 @@
     font-weight: 400;
     letter-spacing: -0.03em;
     color: var(--ink);
-    transition: color 0.2s;
+    transition: color var(--duration-small) ease;
   }
-  .mobile-nav a:hover { color: var(--accent); }
   .mobile-nav .mobile-cta {
     font-size: 16px;
     font-weight: 500;
@@ -755,7 +737,7 @@
     .hero-eyebrow { font-size: 10px; margin-bottom: 24px; }
     .hero-sub { font-size: 17px; max-width: 100%; }
     .hero-ctas { flex-direction: column; gap: 10px; }
-    .hero-ctas .magnetic { width: 100%; }
+    .hero-ctas > span { width: 100%; }
     .hero-ctas .btn { width: 100%; justify-content: center; }
     .hero-symbol { display: none; }
 
@@ -790,7 +772,6 @@
     }
     .step .label { font-size: 24px; }
     .step .desc { font-size: 14px; }
-    .step:hover { padding-left: 0; }
 
     .orbit-label { display: none; }
 
@@ -803,7 +784,6 @@
     .cta-h { font-size: clamp(40px, 12vw, 80px); }
     .cta-sub { font-size: 16px; }
     .cta-btn { font-size: 15px; padding: 16px 24px; }
-    .cta-block .magnetic { width: auto; }
 
     .ghost-num { display: none; }
 
@@ -826,24 +806,96 @@
     .mobile-nav { gap: 28px; }
   }
 
-  /* ─── Touch devices — deshabilitar hover effects ── */
-  @media (hover: none) and (pointer: coarse) {
-    .service:hover { background: var(--paper); }
-    .step:hover { padding-left: 0; }
-    .btn.ghost:hover { color: var(--ink); }
-    .magnetic { will-change: auto !important; }
+  .nav-cta,
+  .btn,
+  .cta-btn,
+  .nav-hamburger,
+  .mobile-nav a {
+    transition-property: transform, background-color, color;
+    transition-duration: var(--duration-press), var(--duration-small), var(--duration-small);
+    transition-timing-function: var(--ease-out), ease, ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta:hover { transform: translateY(-1px); background: var(--ink-80); }
+    .nav-cta:hover::before,
+    .btn.primary:hover::before,
+    .cta-btn:hover::before { transform: translateX(100%); }
+    .btn.primary:hover { transform: translateY(-1px); background: var(--ink-80); }
+    .btn.ghost:hover { color: var(--accent); }
+    .btn:hover .arrow { transform: translateX(4px); }
+    .service:hover { background: var(--white); }
+    .marquee-track .client:hover { color: var(--ink); }
+    .marquee-track .client-logo:hover img { opacity: 1; }
+    .cta-btn:hover { transform: translateY(-2px); }
+    .cta-btn--wa:hover { background: var(--ink); color: var(--white); }
+    .foot-grid ul a:hover,
+    .mobile-nav a:hover { color: var(--accent); }
+  }
+
+  .nav-cta:active,
+  .btn.primary:active,
+  .btn.ghost:active,
+  .cta-btn:active,
+  .cta-btn--wa:active,
+  .nav-hamburger:active,
+  .mobile-nav a:active {
+    transform: scale(0.97);
   }
 
   /* ─── Reduced motion ────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
-    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    html { scroll-behavior: auto; }
+
+    .reveal-up,
+    .reveal-stagger > * {
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero-h1 .line span {
+      transform: none;
+      transition: none;
+    }
+
+    .mobile-nav {
+      transform: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-hamburger span {
+      transition: opacity 0.2s ease;
+    }
+
+    .nav-links a::after,
+    .nav-cta::before,
+    .btn.primary::before,
+    .cta-btn::before {
+      display: none;
+    }
+
+    .nav-cta:hover,
+    .btn.primary:hover,
+    .cta-btn:hover,
+    .nav-cta:active,
+    .btn.primary:active,
+    .btn.ghost:active,
+    .cta-btn:active,
+    .cta-btn--wa:active,
+    .nav-hamburger:active,
+    .mobile-nav a:active,
+    .btn:hover .arrow {
+      transform: none;
+    }
+
     .scroll-prog { display: none; }
   }
 </style>
 </head>
 <body>
 
-<div class="cursor" id="cursor"></div>
 <div class="scroll-prog" id="scrollProg"></div>
 
 <nav class="topbar" id="nav">
@@ -883,14 +935,13 @@
       </div>
 
       <div class="hero-eyebrow" id="heroEyebrow">
-        <span class="line-anim"></span>
         <span>Software · IA · Sistemas a medida</span>
       </div>
 
       <h1 class="hero-h1" id="heroH1">
         <span class="line"><span>Construimos</span></span>
         <span class="line"><span>sistemas que</span></span>
-        <span class="line"><span>resuelven <em class="scramble" id="scrambleWord">problemas</em>.</span></span>
+        <span class="line"><span>resuelven <em class="scramble" id="scrambleWord" aria-label="problemas">problemas</em>.</span></span>
       </h1>
 
       <p class="hero-sub" id="heroSub">
@@ -898,10 +949,10 @@
       </p>
 
       <div class="hero-ctas" id="heroCtas">
-        <span class="magnetic"><a href="#contacto" class="btn primary">
+        <span><a href="#contacto" class="btn primary">
           Empezar un proyecto <span class="arrow">→</span>
         </a></span>
-        <span class="magnetic"><a href="#trabajo" class="btn ghost">
+        <span><a href="#trabajo" class="btn ghost">
           Ver nuestro trabajo
         </a></span>
       </div>
@@ -1043,20 +1094,20 @@
         Métricas reales de sistemas que construimos y dejamos funcionando en los últimos 18 meses.
       </p>
 
-      <div class="stats">
-        <div class="stat reveal-up">
+      <div class="stats reveal-stagger">
+        <div class="stat">
           <div class="value" data-count="40" data-suffix="%">0%</div>
           <div class="label">Reducción media de latencia en los sistemas que construimos.</div>
         </div>
-        <div class="stat reveal-up">
+        <div class="stat">
           <div class="value" data-count="87" data-suffix="%">0%</div>
           <div class="label">Menos trabajo manual tras automatizar procesos operativos con IA.</div>
         </div>
-        <div class="stat reveal-up">
+        <div class="stat">
           <div class="value" data-count="14" data-suffix="<em>d</em>">0<em>d</em></div>
           <div class="label">Media del ciclo problema → primera solución funcionando.</div>
         </div>
-        <div class="stat reveal-up">
+        <div class="stat">
           <div class="value" data-count="12" data-suffix="">0</div>
           <div class="label">Sistemas en producción construidos para clientes en sectores distintos.</div>
         </div>
@@ -1095,10 +1146,10 @@
         Primera llamada de 30 minutos, sin compromiso. Escuchamos el problema y te decimos si podemos construir la solución — y si no podemos, también.
       </p>
       <div class="cta-actions reveal-up">
-        <span class="magnetic" style="display: inline-block;"><a href="mailto:info@nextthink.es" class="cta-btn" data-od-id="cta-email">
+        <span style="display: inline-block;"><a href="mailto:info@nextthink.es" class="cta-btn" data-od-id="cta-email">
           info@nextthink.es <span class="arrow">→</span>
         </a></span>
-        <span class="magnetic" style="display: inline-block;"><a href="https://wa.me/34684011183" target="_blank" rel="noopener" class="cta-btn cta-btn--wa" data-od-id="cta-whatsapp" aria-label="Escríbenos por WhatsApp al 684 011 183">
+        <span style="display: inline-block;"><a href="https://wa.me/34684011183" target="_blank" rel="noopener" class="cta-btn cta-btn--wa" data-od-id="cta-whatsapp" aria-label="Escríbenos por WhatsApp al 684 011 183">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.71.306 1.263.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.887 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.892c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652a12.062 12.062 0 005.71 1.447h.005c6.585 0 11.946-5.335 11.949-11.893a11.821 11.821 0 00-3.48-8.463"/></svg>
           WhatsApp <span class="wa-num">684&nbsp;011&nbsp;183</span>
         </a></span>
@@ -1155,28 +1206,43 @@
 <script>
   gsap.registerPlugin(ScrollTrigger);
 
-  const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduceMotion = motionQuery.matches;
+  motionQuery.addEventListener('change', () => window.location.reload());
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-  // ── Custom cursor
-  (() => {
-    const cur = document.getElementById('cursor');
-    if (isTouch) return;
-    let x = 0, y = 0, tx = 0, ty = 0;
-    window.addEventListener('pointermove', e => {
-      tx = e.clientX; ty = e.clientY;
-      cur.style.opacity = '1';
+  if (!reduceMotion && finePointer) {
+    const scrambleWord = document.getElementById('scrambleWord');
+    const originalWord = scrambleWord.textContent;
+    const scrambleChars = '!@#$%^&*<>-_=+[]{}|;:,./?abcdefghijklmnopqrstuvwxyz';
+    const originalWidth = scrambleWord.getBoundingClientRect().width;
+    let scrambleTween;
+
+    scrambleWord.style.width = `${originalWidth}px`;
+    scrambleWord.style.textAlign = 'left';
+
+    scrambleWord.closest('.line').addEventListener('pointerenter', () => {
+      scrambleTween?.kill();
+      const state = { progress: 0 };
+
+      scrambleTween = gsap.to(state, {
+        progress: 1,
+        duration: 0.6,
+        ease: 'power2.out',
+        onUpdate: () => {
+          const revealed = Math.floor(state.progress * originalWord.length);
+          scrambleWord.textContent = [...originalWord].map((character, index) => {
+            if (index < revealed || character === ' ') return character;
+            return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+          }).join('');
+        },
+        onComplete: () => {
+          scrambleWord.textContent = originalWord;
+          scrambleTween = undefined;
+        }
+      });
     });
-    function raf() {
-      x += (tx - x) * 0.2; y += (ty - y) * 0.2;
-      cur.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-      requestAnimationFrame(raf);
-    }
-    raf();
-    document.querySelectorAll('a, button, .service').forEach(el => {
-      el.addEventListener('pointerenter', () => cur.classList.add('hover'));
-      el.addEventListener('pointerleave', () => cur.classList.remove('hover'));
-    });
-  })();
+  }
 
   // ── Nav scrolled state
   ScrollTrigger.create({
@@ -1186,59 +1252,62 @@
     }
   });
 
-  // ── Hero entrance
-  const heroTl = gsap.timeline({ delay: 0.3, defaults: { ease: 'expo.out' } });
-  heroTl
-    .to('#heroEyebrow', { opacity: 1, duration: 0.6 })
-    .to('#heroEyebrow .line-anim', { width: 40, duration: 0.8 }, '<')
-    .to('#heroH1 .line span', { y: 0, duration: 1.3, stagger: 0.12 }, '-=0.4')
-    .to('#heroSub', { opacity: 1, y: 0, duration: 0.9 }, '-=0.6')
-    .to('#heroCtas', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
-    .from('#heroSymbol', { opacity: 0, scale: 1.1, duration: 1.6 }, '-=1.4');
-
   // ── Hero symbol parallax
-  gsap.to('#heroSymbol', {
-    yPercent: -30,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: true,
-    }
-  });
-  gsap.to('#heroSymbol img', {
-    rotation: 45,
-    ease: 'none',
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1.2,
-    }
-  });
-
-  // ── Reveal-up
-  gsap.utils.toArray('.reveal-up').forEach(el => {
-    gsap.to(el, {
-      opacity: 1, y: 0, duration: 1, ease: 'expo.out',
-      scrollTrigger: { trigger: el, start: 'top 85%' }
+  if (!reduceMotion) {
+    gsap.to('#heroSymbol', {
+      yPercent: -30,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: true,
+      }
     });
-  });
-
-  // ── Reveal stagger (services)
-  gsap.utils.toArray('.reveal-stagger').forEach(group => {
-    gsap.to(group.children, {
-      opacity: 1, y: 0, duration: 1, ease: 'expo.out', stagger: 0.12,
-      scrollTrigger: { trigger: group, start: 'top 80%' }
+    gsap.to('#heroSymbol img', {
+      rotation: 45,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.hero',
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.2,
+      }
     });
-  });
+  }
+
+  // ── Reveals
+  if (reduceMotion) {
+    gsap.set('.reveal-up, .reveal-stagger > *', { opacity: 1, y: 0 });
+  } else {
+    gsap.utils.toArray('.reveal-up').forEach(el => {
+      gsap.to(el, {
+        opacity: 1, y: 0, duration: 1, ease: 'expo.out',
+        scrollTrigger: { trigger: el, start: 'top 85%' }
+      });
+    });
+
+    gsap.utils.toArray('.reveal-stagger').forEach(group => {
+      gsap.to(group.children, {
+        opacity: 1,
+        y: 0,
+        duration: 1,
+        ease: 'expo.out',
+        stagger: 0.06,
+        scrollTrigger: { trigger: group, start: 'top 80%' }
+      });
+    });
+  }
 
   // ── Stats counter
   gsap.utils.toArray('.stat').forEach(stat => {
     const valEl = stat.querySelector('.value');
     const target = parseInt(valEl.dataset.count, 10);
     const suffix = valEl.dataset.suffix || '';
+    if (reduceMotion) {
+      valEl.innerHTML = target + suffix;
+      return;
+    }
     const obj = { v: 0 };
     ScrollTrigger.create({
       trigger: stat,
@@ -1297,190 +1366,78 @@
       node.appendChild(frag);
     };
     walk(q);
-    gsap.to(q.querySelectorAll('.word'), {
-      opacity: 1,
-      duration: 0.3,
-      stagger: 0.04,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: q,
-        start: 'top 80%',
-        end: 'bottom 60%',
-        scrub: 1,
-      }
-    });
+    const words = q.querySelectorAll('.word');
+    if (reduceMotion) {
+      gsap.set(words, { opacity: 1 });
+    } else {
+      gsap.to(words, {
+        opacity: 1,
+        duration: 0.3,
+        stagger: 0.04,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: q,
+          start: 'top 80%',
+          end: 'bottom 60%',
+          scrub: 1,
+        }
+      });
+    }
   })();
 
   // ── Scroll progress bar
-  gsap.to('#scrollProg', {
-    width: '100%',
-    ease: 'none',
-    scrollTrigger: { start: 0, end: 'max', scrub: 0.1 }
-  });
-
-  // ── Magnetic buttons (desktop only)
-  if (!isTouch) {
-    document.querySelectorAll('.magnetic').forEach(wrap => {
-      const child = wrap.firstElementChild;
-      const strength = 0.35;
-      const reset = () => {
-        gsap.to(wrap, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.4)' });
-        gsap.to(child, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.4)' });
-      };
-      wrap.addEventListener('pointermove', e => {
-        const r = wrap.getBoundingClientRect();
-        const x = e.clientX - r.left - r.width / 2;
-        const y = e.clientY - r.top - r.height / 2;
-        gsap.to(wrap, { x: x * strength, y: y * strength, duration: 0.6, ease: 'power3.out' });
-        gsap.to(child, { x: x * strength * 0.5, y: y * strength * 0.5, duration: 0.6, ease: 'power3.out' });
-      });
-      wrap.addEventListener('pointerleave', reset);
-      wrap.addEventListener('pointercancel', reset);
+  if (!reduceMotion) {
+    gsap.to('#scrollProg', {
+      transform: 'scaleX(1)',
+      ease: 'none',
+      scrollTrigger: { start: 0, end: 'max', scrub: 0.1 }
     });
   }
 
-  // ── Text scramble on hero word
-  (() => {
-    const el = document.getElementById('scrambleWord');
-    if (!el) return;
-    const original = el.textContent;
-    requestAnimationFrame(() => {
-      const w = el.getBoundingClientRect().width;
-      el.style.display = 'inline-block';
-      el.style.width = w + 'px';
-      el.style.textAlign = 'left';
-    });
-    const chars = '!@#$%^&*<>-_=+[]{}|;:,./?abcdefghijklmnopqrstuvwxyz';
-    let running = false;
-    function scramble() {
-      if (running) return;
-      running = true;
-      const len = original.length;
-      let frame = 0;
-      const total = 40;
-      const int = setInterval(() => {
-        let out = '';
-        for (let i = 0; i < len; i++) {
-          const progress = frame / total;
-          if (i < progress * len) out += original[i];
-          else if (original[i] === ' ') out += ' ';
-          else out += chars[Math.floor(Math.random() * chars.length)];
-        }
-        el.textContent = out;
-        frame++;
-        if (frame > total) { clearInterval(int); el.textContent = original; running = false; }
-      }, 70);
-    }
-    setTimeout(scramble, 2200);
-    if (!isTouch) el.parentElement.addEventListener('pointerenter', scramble);
-  })();
-
-  // ── Ambient shapes float
-  document.querySelectorAll('.ambient .shape').forEach((s, i) => {
-    gsap.to(s, {
-      x: 'random(-80, 80)',
-      y: 'random(-60, 60)',
-      duration: 'random(8, 14)',
-      repeat: -1,
-      yoyo: true,
-      ease: 'sine.inOut',
-      delay: i * 0.3,
-    });
-  });
-
-  // ── Ghost big section numbers parallax
-  gsap.utils.toArray('.ghost-num').forEach(el => {
-    gsap.fromTo(el, { y: 80 }, {
-      y: -80,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: el.closest('section'),
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true,
-      }
-    });
-  });
-
-  // ── Orbit label continuous rotation
-  (() => {
-    const lab = document.getElementById('orbitLabel');
-    if (!lab) return;
-    gsap.to(lab.querySelector('svg'), {
-      rotation: 360,
-      duration: 18,
-      ease: 'none',
-      repeat: -1,
-      transformOrigin: '50% 50%',
-    });
-  })();
-
-  // ── Service card 3D tilt (desktop only)
-  if (!isTouch) {
-    document.querySelectorAll('.service').forEach(card => {
-      card.classList.add('tilt-ready');
-      const reset = () => gsap.to(card, { rotationY: 0, rotationX: 0, duration: 0.8, ease: 'elastic.out(1, 0.5)' });
-      card.addEventListener('pointermove', e => {
-        const r = card.getBoundingClientRect();
-        const px = (e.clientX - r.left) / r.width - 0.5;
-        const py = (e.clientY - r.top) / r.height - 0.5;
-        gsap.to(card, {
-          rotationY: px * 8,
-          rotationX: -py * 8,
-          transformPerspective: 900,
-          duration: 0.6,
-          ease: 'power2.out',
-        });
+  if (!reduceMotion) {
+    // ── Ambient shapes float
+    document.querySelectorAll('.ambient .shape').forEach((s, i) => {
+      gsap.to(s, {
+        x: 'random(-80, 80)',
+        y: 'random(-60, 60)',
+        duration: 'random(8, 14)',
+        repeat: -1,
+        yoyo: true,
+        ease: 'sine.inOut',
+        delay: i * 0.3,
       });
-      card.addEventListener('pointerleave', reset);
-      card.addEventListener('pointercancel', reset);
     });
+
+    // ── Ghost big section numbers parallax
+    gsap.utils.toArray('.ghost-num').forEach(el => {
+      gsap.fromTo(el, { y: 80 }, {
+        y: -80,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: el.closest('section'),
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        }
+      });
+    });
+
+    // ── Orbit label continuous rotation
+    (() => {
+      const lab = document.getElementById('orbitLabel');
+      if (!lab) return;
+      gsap.to(lab.querySelector('svg'), {
+        rotation: 360,
+        duration: 18,
+        ease: 'none',
+        repeat: -1,
+        transformOrigin: '50% 50%',
+      });
+    })();
   }
-
-  // ── CTA headline char-by-char hover wave (desktop only)
-  if (!isTouch) (() => {
-    const h = document.getElementById('ctaH');
-    if (!h) return;
-    const walk = (node) => {
-      node.childNodes.forEach(child => {
-        if (child.nodeType === 3) {
-          const text = child.textContent;
-          const frag = document.createDocumentFragment();
-          [...text].forEach(ch => {
-            if (ch === ' ') { frag.appendChild(document.createTextNode(' ')); return; }
-            const s = document.createElement('span');
-            s.className = 'char'; s.textContent = ch;
-            frag.appendChild(s);
-          });
-          child.parentNode.replaceChild(frag, child);
-        } else if (child.nodeType === 1 && child.tagName !== 'BR') {
-          walk(child);
-        }
-      });
-    };
-    walk(h);
-    const chars = h.querySelectorAll('.char');
-    h.addEventListener('pointermove', e => {
-      chars.forEach(c => {
-        const r = c.getBoundingClientRect();
-        const cx = r.left + r.width / 2;
-        const cy = r.top + r.height / 2;
-        const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
-        const maxDist = 160;
-        if (dist < maxDist) {
-          gsap.to(c, { y: (1 - dist / maxDist) * -14, duration: 0.4, ease: 'power2.out' });
-        } else {
-          gsap.to(c, { y: 0, duration: 0.6, ease: 'power2.out' });
-        }
-      });
-    });
-    h.addEventListener('pointerleave', () => {
-      gsap.to(chars, { y: 0, duration: 0.7, ease: 'elastic.out(1, 0.5)' });
-    });
-  })();
 
   // ── Marquee direction flips on scroll velocity
-  (() => {
+  if (!reduceMotion) (() => {
     let lastY = window.scrollY;
     let dir = 1;
     const track = document.getElementById('marquee');
@@ -1507,7 +1464,10 @@
       if (target) {
         e.preventDefault();
         const y = target.getBoundingClientRect().top + window.scrollY - 60;
-        window.scrollTo({ top: y, behavior: 'smooth' });
+        window.scrollTo({
+          top: y,
+          behavior: reduceMotion ? 'auto' : 'smooth'
+        });
       }
     });
   });
