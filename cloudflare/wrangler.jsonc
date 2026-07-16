@@ -6,7 +6,7 @@
   "workers_dev": false,
   "routes": [
     {
-      "pattern": "nextthink.es/index.html*",
+      "pattern": "nextthink.es/*",
       "zone_name": "nextthink.es"
     },
     {

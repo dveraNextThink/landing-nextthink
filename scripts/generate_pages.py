@@ -39,8 +39,8 @@ def head(title: str, description: str, path: str, schema: dict, robots: str = "i
   <meta name="twitter:description" content="{description}">
   <meta name="twitter:image" content="{OG_IMAGE}">
   <meta name="twitter:image:alt" content="NextThink: software e IA a medida para operaciones B2B">
-  <link rel="stylesheet" href="/assets/css/site.css">
-  <script defer src="/assets/js/site.js"></script>
+  <link rel="stylesheet" href="/assets/css/site.css?v=20260716-brand-v3">
+  <script defer src="/assets/js/site.js?v=20260716-motion-v2"></script>
   <script type="application/ld+json">
 {json.dumps(schema, ensure_ascii=False, indent=2)}
   </script>
@@ -65,7 +65,10 @@ def header(active: str) -> str:
   <header class="site-header">
     <div class="wrap nav-shell">
       <a class="brand-link" href="/" aria-label="NextThink, inicio">
-        <img src="/brand/wordmark-only.png" alt="NextThink" width="300" height="69">
+        <span class="brand-lockup" aria-hidden="true">
+          <img class="brand-symbol" src="/brand/symbol-only.png" alt="" width="140" height="140">
+          <img class="brand-wordmark" src="/brand/wordmark-only.png?v=20260716-clean-wordmark" alt="" width="300" height="69">
+        </span>
       </a>
       <nav class="desktop-nav" aria-label="Navegación principal">
         {desktop}
@@ -87,7 +90,10 @@ def footer() -> str:
     <div class="wrap">
       <div class="footer-grid">
         <div class="footer-brand">
-          <img src="/brand/wordmark-only.png" alt="NextThink" width="300" height="69" loading="lazy" decoding="async">
+          <div class="brand-lockup" role="img" aria-label="NextThink">
+            <img class="brand-symbol" src="/brand/symbol-only.png" alt="" width="140" height="140" loading="lazy" decoding="async">
+            <img class="brand-wordmark" src="/brand/wordmark-only.png?v=20260716-clean-wordmark" alt="" width="300" height="69" loading="lazy" decoding="async">
+          </div>
           <p>Software e inteligencia artificial a medida para convertir problemas operativos B2B en sistemas que funcionan.</p>
         </div>
         <nav class="footer-col" aria-label="Servicios del pie">
