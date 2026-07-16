@@ -1,0 +1,4 @@
+.DS_Store
+.pi-subagents/
+__pycache__/
+*.pyc
