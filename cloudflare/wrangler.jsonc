@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/cloudflare/workers-sdk/main/packages/wrangler/config-schema.json",
+  "name": "nextthink-seo-redirects",
+  "main": "redirects.js",
+  "compatibility_date": "2026-07-16",
+  "workers_dev": false,
+  "routes": [
+    {
+      "pattern": "nextthink.es/index.html*",
+      "zone_name": "nextthink.es"
+    },
+    {
+      "pattern": "www.nextthink.es",
+      "custom_domain": true
+    }
+  ]
+}
