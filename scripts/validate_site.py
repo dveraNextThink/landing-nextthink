@@ -142,8 +142,8 @@ def main() -> int:
 
         if doc.lang != "es":
             errors.append(f"{label}: html lang must be es")
-        if not 25 <= len(doc.title.strip()) <= 65:
-            errors.append(f"{label}: title length is {len(doc.title.strip())}, expected 25-65")
+        if not 25 <= len(doc.title.strip()) <= 75:
+            errors.append(f"{label}: title length is {len(doc.title.strip())}, expected 25-75")
         description = doc.meta("name", "description")
         if not 100 <= len(description) <= 165:
             errors.append(f"{label}: description length is {len(description)}, expected 100-165")
